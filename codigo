@@ -1,0 +1,106 @@
+Script Database
+create  database piaBase;
+use piaBase;
+
+create table beca( 
+  id_beca INT NOT NULL,
+  porcentaje INT NULL,
+  tipo_beca VARCHAR(45) NULL,
+  PRIMARY KEY (id_beca)
+  );
+
+CREATE TABLE IF NOT EXISTS alumno( 
+  id_alumno INT NOT NULL,
+  nombre VARCHAR(45) NULL,
+  edad INT NULL,
+  telefono VARCHAR(45) NULL,
+  semestre TINYINT NULL,
+  escolaridad VARCHAR(45) NULL,
+  fk_idbeca INT NOT NULL,
+  PRIMARY KEY (id_alumno),
+  foreign key (fk_idbeca) references beca (id_beca)
+  );
+  
+
+CREATE TABLE IF NOT EXISTS campus ( #Campus: id, nombre
+  id_facu INT NOT NULL,
+  nombre VARCHAR(45) NULL,
+  PRIMARY KEY (`id_facu`)
+  );
+  
+  CREATE TABLE IF NOT EXISTS aula( #Aula: id, num, id facu
+  id_aula INT NOT NULL,
+  num_aula SMALLINT NULL,
+  fk_idfacu INT NOT NULL,
+  PRIMARY KEY (id_aula),
+  foreign key (fk_idfacu) references campus (id_facu)
+  );
+  
+  CREATE TABLE IF NOT EXISTS maestro( #Maestro: id, nombre, telefono, id alumno, aula
+  id_maestro INT NOT NULL,
+  nombre VARCHAR(45) NULL,
+  telefono VARCHAR(45) NULL,
+  fk_idAlumno INT NOT NULL,
+  fk_idAula INT NOT NULL,
+  PRIMARY KEY (id_maestro),
+  foreign key (fk_idAlumno) references alumno (id_alumno),
+  foreign key (fk_idAula) references aula (id_aula)
+  );
+  
+  CREATE TABLE IF NOT EXISTS materia( #Materia: id, nombre, id alumno, id maestro
+  idmateria SMALLINT NOT NULL,
+  nombre VARCHAR(45) NULL,
+  fk_idAlumno INT NOT NULL,
+  fk_idMaestro INT NOT NULL,
+  PRIMARY KEY (idmateria),
+  foreign key (fk_idAlumno) references alumno (id_alumno),
+  foreign key (fk_idMaestro) references maestro (id_maestro)
+  );
+ Inserts de los datos con método transacción 
+#Beca: id, porcentaje, tipo
+START TRANSACTION;
+INSERT INTO Beca VALUES ('101','80','bajos recursos');
+INSERT INTO Beca VALUES ('102','70','bajos recursos');
+INSERT INTO Beca VALUES ('103','50','bajos recursos');
+INSERT INTO Beca VALUES ('104','25','bajos recursos');
+commit;
+
+ #Alumnos: id,nombre,edad,telefono,semestre,escolaridad, id beca
+START TRANSACTION;
+INSERT INTO alumno VALUES (1000,'Rodrigo','19','8123021825','4','universidad','101');
+INSERT INTO alumno VALUES (1002,'Ernesto','20','8123021824','4','universidad','101');
+INSERT INTO alumno VALUES (1003,'Jose','19','8123021823','4','universidad','104');
+INSERT INTO alumno VALUES (1004,'Rodolfo','23','8123021822','4','universidad','103');
+commit;
+
+#Campus: id, nombre
+START TRANSACTION;
+INSERT INTO campus VALUES ('10','Mederos');
+INSERT INTO campus VALUES ('11','San nicolas');
+INSERT INTO campus VALUES ('12','Ayende');
+commit;
+
+#Aula: id, num, id facu
+START TRANSACTION;
+INSERT INTO aula VALUES ('001','10','10');
+INSERT INTO aula VALUES ('002','11','10');
+INSERT INTO aula VALUES ('003','12','11');
+INSERT INTO aula VALUES ('004','13','12');
+commit;
+
+#Maestro: id, nombre, telefono, id alumno, aula
+START TRANSACTION;
+INSERT INTO maestro VALUES ('1010','Javier','8180291010','1003','001');
+INSERT INTO maestro VALUES ('1011','Javier','8180291010','1002','003');
+INSERT INTO maestro VALUES ('1012','Javier','8180291010','1002','001');
+INSERT INTO maestro VALUES ('1013','Javier','8180291010','1004','004');
+INSERT INTO maestro VALUES ('1014','Javier','8180291010','1000','002');
+commit;
+
+#Materia: id, nombre, id alumno, id maestro
+START TRANSACTION;
+INSERT INTO materia VALUES ('11','Prgramacion','1000','1010');
+INSERT INTO materia VALUES ('12','Base de datos','1003','1011');
+INSERT INTO materia VALUES ('13','Derecho','1002','1012');
+INSERT INTO materia VALUES ('14','Administracion','1004','1013');
+commit;
